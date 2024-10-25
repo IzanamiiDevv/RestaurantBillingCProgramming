@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#define MAX_FOOD 10
 
 enum Food_Type {
     Appetizer,
@@ -12,14 +14,12 @@ typedef struct {
     float price;
 } Food;
 
-Food* addFood(enum Food_Type food_t, const char* name, float price);
-void printMenu(const Food* food_data);
+Food addFood(enum Food_Type food_t, const char* name, float price);
+void printMenu(Food* food_data);
+int s_viaCategory(const void* a, const void* b);
 
 int main() {
-
-// Declare Food Data
-
-    Food* foodData[9];
+    Food foodData[MAX_FOOD];
 
     foodData[0] = addFood(Appetizer, "Sinigang", 30.0);
     foodData[1] = addFood(Appetizer, "Lumpia", 15.0);
@@ -33,6 +33,7 @@ int main() {
     foodData[7] = addFood(Dessert, "Leche Flan", 60.0);
     foodData[8] = addFood(Dessert, "Ube Ice Cream", 50.0);
 
+    qsort(foodData, MAX_FOOD, sizeof(Food), s_viaCategory);
     printMenu(foodData);
 
     
@@ -42,33 +43,6 @@ int main() {
 
     float totalBill = 0.0;
     int choice;
-
-    
-
-/*
-// ------------------------------------------------------------------------------
-
-    printf("\nGonzales and Toreta's Restaurant Menu:\n");
-
-    printf("Appetizers:\n");
-    printf("\t1. Sinigang na Soup: P%.2f\n", appetizers[0]);
-    printf("\t2. Lumpia: P%.2f\n", appetizers[1]);
-    printf("\t3. Ceasar Salad: P%.2f\n", appetizers[2]);
-
-    printf("\nMain Courses:\n");
-    printf("\t4. Adobong Chicken: P%.2f\n", mainCourses[0]);
-    printf("\t5. Beef na Stik: P%.2f\n", mainCourses[1]);
-    printf("\t6. Pancit: P%.2f\n", mainCourses[2]);
-
-    printf("\nDesserts:\n");
-    printf("\t7. Halo-Halo: P%.2f\n", desserts[0]);
-    printf("\t8. Leche Flan: P%.2f\n", desserts[1]);
-    printf("\t9. Ube Ice Cream: P%.2f\n", desserts[2]);
-
-    printf("\nSelect items by entering their numbers (0 to finish ordering):\n");
-
-// ------------------------------------------------------------------------------
-*/
 
     int selectedItems[10];
     int itemCount = 0;
@@ -169,15 +143,72 @@ int main() {
     return 0;
 }
 
-Food* addFood(enum Food_Type food_t, const char* name, float price) {
+Food addFood(enum Food_Type food_t, const char* name, float price) {
     Food buffer;
     buffer.food_t = food_t;
     buffer.name = name;
-    buffer.price;
+    buffer.price = price;
 
-    return &buffer;
+    return buffer;
 }
 
-void printMenu(const Food* food_data) {
+int s_viaCategory(const void* a, const void* b) {
+    return ((*(Food*)a).food_t - (*(Food*)b).food_t);
+}
 
+void printMenu(Food* food_data) {
+    unsigned char a_count = 0;
+    unsigned char mc_count = 0;
+    unsigned char dess_count = 0;
+    unsigned char *a_indexes = NULL;
+    unsigned char *mc_indexes = NULL;
+    unsigned char *dess_indexes = NULL;
+
+    for(unsigned char i = 0; i < MAX_FOOD; i++)
+        switch (food_data[i].food_t) {
+        case Appetizer:
+            a_count += 1;
+            a_indexes = realloc(a_indexes, sizeof(unsigned char) * a_count);
+            a_indexes[a_count - 1] = i;
+            break;
+        case MainCourse:
+            mc_count += 1;
+            mc_indexes = realloc(mc_indexes, sizeof(unsigned char) * mc_count);
+            mc_indexes[mc_count - 1] = i;
+            break;
+        case Dessert:
+            dess_count += 1;
+            dess_indexes = realloc(dess_indexes, sizeof(unsigned char) * dess_count);
+            dess_indexes[dess_count - 1] = i;
+            break;
+        }
+
+    printf("Gonzales and Toreta's Restaurant Menu:\n");
+    
+    if(a_count != 0) {
+        printf("Appetizer:\n");
+        for(unsigned char i = 0; i < a_count; i++)
+            printf("\t%i.%s, price: %.2f\n",
+            (i + 1),food_data[a_indexes[i]].name, food_data[a_indexes[i]].price);
+    }
+
+    if(mc_count != 0) {
+        printf("Main Courses:\n");
+        for(unsigned char i = 0; i < mc_count; i++)
+        printf("\t%i.%s, price: %.2f\n",
+            (i + 4),food_data[mc_indexes[i]].name, food_data[mc_indexes[i]].price);
+    }
+
+    if(dess_count != 0) {
+        printf("Desserts:\n");
+        for(unsigned char i = 0; i < dess_count; i++)
+        printf("\t%i.%s, price: %.2f\n",
+            (i + 7),food_data[dess_indexes[i]].name, food_data[dess_indexes[i]].price);
+    }
+
+    free(a_indexes);
+    free(mc_indexes);
+    free(dess_indexes);
+
+    printf("\nSelect items by entering their id:\n");
 }
