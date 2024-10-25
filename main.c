@@ -1,7 +1,41 @@
 #include <stdio.h>
 
+enum Food_Type {
+    Appetizer,
+    MainCourse,
+    Dessert
+};
+
+typedef struct {
+    enum Food_Type food_t;
+    const char* name;
+    float price;
+} Food;
+
+Food* addFood(enum Food_Type food_t, const char* name, float price);
+void printMenu(const Food* food_data);
+
 int main() {
 
+// Declare Food Data
+
+    Food* foodData[9];
+
+    foodData[0] = addFood(Appetizer, "Sinigang", 30.0);
+    foodData[1] = addFood(Appetizer, "Lumpia", 15.0);
+    foodData[2] = addFood(Appetizer, "Ceasar Salad", 99.0);
+
+    foodData[3] = addFood(MainCourse, "Adobong Chicken", 180.0);
+    foodData[4] = addFood(MainCourse, "Beef na Stik", 130.0);
+    foodData[5] = addFood(MainCourse, "Pancit", 80.0);
+
+    foodData[6] = addFood(Dessert, "Halo Halo", 80.0);
+    foodData[7] = addFood(Dessert, "Leche Flan", 60.0);
+    foodData[8] = addFood(Dessert, "Ube Ice Cream", 50.0);
+
+    printMenu(foodData);
+
+    
     float appetizers[] = {30.0, 15.0, 99.0};
     float mainCourses[] = {180.0, 130.0, 80.0};
     float desserts[] = {80.0, 60.0, 50.0};
@@ -9,6 +43,9 @@ int main() {
     float totalBill = 0.0;
     int choice;
 
+    
+
+/*
 // ------------------------------------------------------------------------------
 
     printf("\nGonzales and Toreta's Restaurant Menu:\n");
@@ -31,6 +68,7 @@ int main() {
     printf("\nSelect items by entering their numbers (0 to finish ordering):\n");
 
 // ------------------------------------------------------------------------------
+*/
 
     int selectedItems[10];
     int itemCount = 0;
@@ -129,4 +167,17 @@ int main() {
     }
 
     return 0;
+}
+
+Food* addFood(enum Food_Type food_t, const char* name, float price) {
+    Food buffer;
+    buffer.food_t = food_t;
+    buffer.name = name;
+    buffer.price;
+
+    return &buffer;
+}
+
+void printMenu(const Food* food_data) {
+
 }
