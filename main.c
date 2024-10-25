@@ -17,7 +17,8 @@ Food addFood(enum Food_Type food_t, const char* name, float price);
 void printMenu(Food* food_data, unsigned char* length);
 int s_viaCategory(const void* a, const void* b);
 void getUserFoods(int** buff, int* len_buff, Food* food_data, unsigned char* food_len);
-void printnReceipt(int* items, int* item_len, Food* foods);
+void printnReceipt(int* items, int* item_len, Food* foods, float* ttl_bill);
+void getPayment(float* total_bill);
 
 #define MAX_FOOD 9
 int main() {
@@ -42,8 +43,11 @@ int main() {
     int *selectedItems = NULL;
     unsigned int s_item_length = 0;
 
+    float total_bill;
+
     getUserFoods(&selectedItems, &s_item_length, foodData, &food_length);
-    printnReceipt(selectedItems, &s_item_length, foodData);
+    printnReceipt(selectedItems, &s_item_length, foodData, &total_bill);
+    getPayment(&total_bill);
 
     free(selectedItems);
     return 0;
@@ -147,7 +151,7 @@ void getUserFoods(int** buff, int* len_buff, Food* food_data, unsigned char* foo
     *len_buff = count_s;
 }
 
-void printnReceipt(int* items, int* item_len, Food* foods) {
+void printnReceipt(int* items, int* item_len, Food* foods, float* ttl_bill) {
     printf("-------------------------");
     printf("\nReceipt:\n");
     float total;
@@ -158,113 +162,17 @@ void printnReceipt(int* items, int* item_len, Food* foods) {
 
     printf("Total Bill: %.2f\n", total);
     printf("-------------------------");
+    (*ttl_bill) = total;
 }
-void getPayment() {}
 
-/*
-
-float appetizers[] = {30.0, 15.0, 99.0};
-    float mainCourses[] = {180.0, 130.0, 80.0};
-    float desserts[] = {80.0, 60.0, 50.0};
-
-    float totalBill = 0.0;
-    int choice;
-
-    int selectedItems[10];
-    int itemCount = 0;
-
-
-
-    while (1) {
-        scanf("%d", &choice);
-
-        if (choice == 0) {
-            break;
-        }
-
-        if (choice >= 1 && choice <= 9) {
-            selectedItems[itemCount++] = choice;
-            switch (choice) {
-                case 1:
-                    totalBill += appetizers[0];
-                    break;
-                case 2:
-                    totalBill += appetizers[1];
-                    break;
-                case 3:
-                    totalBill += appetizers[2];
-                    break;
-                case 4:
-                    totalBill += mainCourses[0];
-                    break;
-                case 5:
-                    totalBill += mainCourses[1];
-                    break;
-                case 6:
-                    totalBill += mainCourses[2];
-                    break;
-                case 7:
-                    totalBill += desserts[0];
-                    break;
-                case 8:
-                    totalBill += desserts[1];
-                    break;
-                case 9:
-                    totalBill += desserts[2];
-                    break;
-            }
-        } else {
-            printf("Invalid choice. Please select a valid item.\n");
-        }
-    }
-
-    printf("-------------------------");
-    printf("\nReceipt:\n");
-    for (int i = 0; i < itemCount; i++) {
-        choice = selectedItems[i];
-        switch (choice) {
-            case 1:
-                printf("Sinigang Soup:\t P%.2f\n", appetizers[0]);
-                break;
-            case 2:
-                printf("Lumpia:\t\t P%.2f\n", appetizers[1]);
-                break;
-            case 3:
-                printf("Ceasar Salad:\t P%.2f\n", appetizers[2]);
-                break;
-            case 4:
-                printf("Chicken Adobo:\t P%.2f\n", mainCourses[0]);
-                break;
-            case 5:
-                printf("Beef Steak:\t P%.2f\n", mainCourses[1]);
-                break;
-            case 6:
-                printf("Pancit:\t\t P%.2f\n", mainCourses[2]);
-                break;
-            case 7:
-                printf("Halo-Halo:\t P%.2f\n", desserts[0]);
-                break;
-            case 8:
-                printf("Leche Flan:\t P%.2f\n", desserts[1]);
-                break;
-            case 9:
-                printf("Ube Ice Cream:\t P%.2f\n", desserts[2]);
-                break;
-        }
-    }
-
-    printf("-------------------------");
-    printf("\nTotal Bill:\t P%.2f\n", totalBill);
-    printf("-------------------------");
-    
+void getPayment(float* total_bill) {
     float payment;
     printf("\nEnter the amount you are paying: P");
     scanf("%f", &payment);
-
-    if (payment < totalBill) {
+    if (payment < (*total_bill)) {
         printf("\nPayment is less than the total bill. Please pay the full amount.\n");
     } else {
-        float change = payment - totalBill;
+        float change = payment - (*total_bill);
         printf("\nThank you for your payment. Your change is P%.2f\n", change);
     }
-*/
+}
